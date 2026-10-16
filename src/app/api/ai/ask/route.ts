@@ -24,7 +24,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const ghClient = new GitHubClient();
+    const token = req.headers.get("x-github-token") || process.env.GITHUB_TOKEN;
+    const ghClient = new GitHubClient({ token });
     const tree = await ghClient.fetchTree(owner, repo, sha || "HEAD");
 
     // 1. Check if Ollama is available

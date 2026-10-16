@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid path traversal attempt" }, { status: 400 });
     }
 
-    const client = new GitHubClient();
+    const token = req.headers.get("x-github-token") || process.env.GITHUB_TOKEN;
+    const client = new GitHubClient({ token });
     const content = await client.fetchFileContent(owner, repo, sha, path);
 
     return NextResponse.json({

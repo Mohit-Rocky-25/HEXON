@@ -10,7 +10,11 @@ import {
   ShieldCheck,
   AlertCircle,
   Terminal,
-  Save
+  Save,
+  Copy,
+  Check,
+  ExternalLink,
+  Laptop
 } from "lucide-react";
 import { useRepository } from "@/context/RepositoryContext";
 import { Card } from "@/components/ui/Card";
@@ -24,6 +28,7 @@ export default function AISettingsPage() {
   const [baseUrl, setBaseUrl] = useState(aiConfig.baseUrl);
   const [modelName, setModelName] = useState(aiConfig.modelName);
   const [testing, setTesting] = useState(false);
+  const [copiedCmd, setCopiedCmd] = useState(false);
   const [statusResult, setStatusResult] = useState<{
     isAvailable: boolean;
     models: string[];
@@ -55,7 +60,7 @@ export default function AISettingsPage() {
       setStatusResult({
         isAvailable: false,
         models: [],
-        error: "Failed to connect to local Ollama server."
+        error: "Could not establish connection to local Ollama daemon."
       });
     } finally {
       setTesting(false);
@@ -79,34 +84,49 @@ export default function AISettingsPage() {
     testConnection();
   };
 
+  const copyCommand = (cmd: string) => {
+    navigator.clipboard.writeText(cmd);
+    setCopiedCmd(true);
+    setTimeout(() => setCopiedCmd(false), 2000);
+  };
+
   return (
     <div className="space-y-6 max-w-3xl">
       {/* Title */}
-      <div className="pb-3 border-b border-console-border">
-        <h1 className="text-lg font-semibold text-console-text font-mono flex items-center gap-2">
-          <Activity className="w-5 h-5 text-console-accent" />
+      <div className="pb-3 border-b border-stone-200">
+        <h1 className="text-lg font-semibold text-stone-900 font-mono flex items-center gap-2">
+          <Activity className="w-5 h-5 text-[#F55036]" />
           <span>Local AI (Ollama) Diagnostics & Configuration</span>
         </h1>
-        <p className="text-xs text-console-muted mt-0.5">
-          Configure local open-weights inference without paying for hosted LLM APIs.
+        <p className="text-xs text-stone-600 mt-0.5">
+          Configure zero-cost, private, local open-weights inference without hosted cloud API fees.
         </p>
       </div>
 
       {/* Connection Status Card */}
       <Card className="p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-3">
             {statusResult?.isAvailable ? (
-              <CheckCircle className="w-5 h-5 text-console-success" />
+              <div className="w-9 h-9 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
+                <CheckCircle className="w-5 h-5 text-emerald-600" />
+              </div>
             ) : (
-              <XCircle className="w-5 h-5 text-console-danger" />
+              <div className="w-9 h-9 rounded-full bg-red-50 border border-red-200 flex items-center justify-center shrink-0">
+                <XCircle className="w-5 h-5 text-red-600" />
+              </div>
             )}
             <div>
-              <h2 className="text-sm font-semibold text-console-text font-mono">
-                {statusResult?.isAvailable ? "Ollama Connected & Ready" : "Ollama Not Reachable"}
-              </h2>
-              <p className="text-xs text-console-muted">
-                Endpoint: <code className="text-console-text">{baseUrl}</code>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-semibold text-stone-900 font-mono">
+                  {statusResult?.isAvailable ? "Ollama Connected & Operational" : "Ollama Daemon Offline / Unreachable"}
+                </h2>
+                <Badge variant={statusResult?.isAvailable ? "success" : "neutral"} size="sm">
+                  {statusResult?.isAvailable ? "ONLINE" : "OFFLINE"}
+                </Badge>
+              </div>
+              <p className="text-xs text-stone-600 mt-0.5 font-mono">
+                Active Endpoint: <code className="text-stone-900 bg-stone-100 px-1 py-0.5 rounded">{baseUrl}</code>
               </p>
             </div>
           </div>
@@ -122,15 +142,22 @@ export default function AISettingsPage() {
           </Button>
         </div>
 
-        {statusResult?.error && (
-          <div className="p-3 rounded bg-console-danger/10 border border-console-danger/30 text-console-danger text-xs font-mono">
-            {statusResult.error}
+        {statusResult && !statusResult.isAvailable && (
+          <div className="p-3.5 rounded-lg bg-stone-50 border border-stone-200 text-xs font-mono space-y-2">
+            <div className="flex items-center gap-2 text-stone-800 font-semibold">
+              <AlertCircle className="w-4 h-4 text-amber-600" />
+              <span>Offline Diagnostic & Graceful Fallback Active</span>
+            </div>
+            <p className="text-stone-600 leading-relaxed">
+              No local Ollama server answered on <code className="text-stone-900 font-semibold">{baseUrl}</code>.
+              RepoPilot will automatically operate in <strong>100% offline deterministic mode</strong> — code search, AST symbol indexing, and architecture mapping remain fully functional.
+            </p>
           </div>
         )}
 
         {statusResult?.models && statusResult.models.length > 0 && (
-          <div className="pt-2 border-t border-console-border space-y-1.5">
-            <span className="text-[11px] font-mono text-console-dim uppercase">
+          <div className="pt-2 border-t border-stone-200 space-y-1.5">
+            <span className="text-[11px] font-mono text-stone-500 uppercase font-semibold">
               Installed Models on Local Machine ({statusResult.models.length}):
             </span>
             <div className="flex flex-wrap gap-1.5">
@@ -138,10 +165,10 @@ export default function AISettingsPage() {
                 <button
                   key={m}
                   onClick={() => setModelName(m)}
-                  className={`px-2 py-0.5 rounded font-mono text-xs border transition-colors ${
+                  className={`px-2.5 py-1 rounded font-mono text-xs border transition-colors ${
                     modelName === m
-                      ? "bg-console-accent text-[#07090e] border-console-accent font-semibold"
-                      : "bg-console-subtle text-console-muted hover:text-console-text border-console-border"
+                      ? "bg-[#0C0A09] text-white border-[#0C0A09] font-medium"
+                      : "bg-[#FAFAF9] text-stone-700 hover:bg-stone-100 border-stone-200"
                   }`}
                 >
                   {m}
@@ -154,13 +181,13 @@ export default function AISettingsPage() {
 
       {/* Settings Form */}
       <Card className="p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-console-text font-mono uppercase">
-          Endpoint Settings
+        <h2 className="text-sm font-semibold text-stone-900 font-mono uppercase">
+          Endpoint & Model Configuration
         </h2>
 
         <div className="space-y-3 font-mono text-xs">
           <div>
-            <label className="block text-console-muted mb-1.5">
+            <label className="block text-stone-700 mb-1.5 font-medium">
               Ollama Base URL
             </label>
             <Input
@@ -172,8 +199,8 @@ export default function AISettingsPage() {
           </div>
 
           <div>
-            <label className="block text-console-muted mb-1.5">
-              Selected Model Name
+            <label className="block text-stone-700 mb-1.5 font-medium">
+              Target Model Identifier
             </label>
             <Input
               type="text"
@@ -181,7 +208,7 @@ export default function AISettingsPage() {
               onChange={(e) => setModelName(e.target.value)}
               placeholder="qwen2.5-coder:1.5b"
             />
-            <span className="text-[11px] text-console-dim block mt-1">
+            <span className="text-[11px] text-stone-500 block mt-1">
               Recommended lightweight coding models: <code>qwen2.5-coder:1.5b</code>, <code>llama3.2:3b</code>, <code>deepseek-coder:1.3b</code>
             </span>
           </div>
@@ -199,35 +226,44 @@ export default function AISettingsPage() {
         </div>
       </Card>
 
-      {/* Setup Instructions */}
+      {/* Quick Setup Instructions */}
       <Card className="p-5 space-y-3 font-mono text-xs">
         <div className="flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-console-accent" />
-          <h2 className="text-sm font-semibold text-console-text uppercase">
-            How to Setup Free Local AI on Windows/Linux/Mac
+          <Terminal className="w-4 h-4 text-[#F55036]" />
+          <h2 className="text-sm font-semibold text-stone-900 uppercase">
+            Windows / macOS / Linux Local Setup Guide
           </h2>
         </div>
 
-        <ol className="list-decimal list-inside space-y-2 text-console-muted leading-relaxed pl-1">
+        <ol className="list-decimal list-inside space-y-2.5 text-stone-600 leading-relaxed pl-1">
           <li>
             Download and install Ollama from{" "}
             <a
               href="https://ollama.com"
               target="_blank"
               rel="noreferrer"
-              className="text-console-accent underline"
+              className="text-[#F55036] underline inline-flex items-center gap-0.5"
             >
-              https://ollama.com
+              <span>https://ollama.com</span>
+              <ExternalLink className="w-3 h-3" />
             </a>
           </li>
           <li>
-            Open PowerShell or Terminal and pull a lightweight open-weights coding model:
-            <pre className="mt-1 p-2 bg-[#07090e] border border-console-border rounded text-console-text">
-              ollama run qwen2.5-coder:1.5b
-            </pre>
+            Open PowerShell (or Terminal) and pull a lightweight open-weights coding model:
+            <div className="mt-1.5 flex items-center justify-between p-2.5 bg-[#FAFAF9] border border-stone-200 rounded text-stone-900">
+              <code>ollama run qwen2.5-coder:1.5b</code>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={copiedCmd ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                onClick={() => copyCommand("ollama run qwen2.5-coder:1.5b")}
+              >
+                {copiedCmd ? "Copied" : "Copy"}
+              </Button>
+            </div>
           </li>
           <li>
-            Click <strong>"Test Connection"</strong> above. RepoPilot will immediately detect your local model!
+            Once running, click <strong>"Test Connection"</strong> above. RepoPilot will immediately recognize your local model!
           </li>
         </ol>
       </Card>

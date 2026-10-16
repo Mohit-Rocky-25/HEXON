@@ -7,7 +7,6 @@ import {
   FolderTree,
   Search,
   Cpu,
-  HelpCircle,
   Bug,
   GitPullRequest,
   Settings,
@@ -15,7 +14,8 @@ import {
   Layers,
   BookOpen,
   Terminal,
-  Activity
+  Activity,
+  Compass
 } from "lucide-react";
 
 interface NavItem {
@@ -48,7 +48,7 @@ export const Sidebar: React.FC = () => {
           icon: <Search className="w-4 h-4" />
         },
         {
-          name: "Architecture",
+          name: "Architecture & 3D Map",
           href: "/architecture",
           icon: <Cpu className="w-4 h-4" />
         }
@@ -98,22 +98,22 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-console-surface border-r border-console-border flex flex-col shrink-0 select-none">
+    <aside className="w-64 bg-white border-r border-stone-200 flex flex-col shrink-0 select-none shadow-xs">
       {/* Brand Header */}
-      <div className="h-14 flex items-center px-4 border-b border-console-border gap-2.5">
-        <div className="w-7 h-7 rounded bg-console-accent/15 border border-console-accent/40 flex items-center justify-center text-console-accent">
-          <Terminal className="w-4 h-4" />
+      <div className="h-14 flex items-center px-4 border-b border-stone-200 gap-2.5">
+        <div className="w-7 h-7 rounded-md bg-[#0C0A09] flex items-center justify-center text-white">
+          <Compass className="w-4 h-4 text-[#F55036]" />
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className="font-semibold text-sm tracking-tight text-console-text">
+            <span className="font-semibold text-sm tracking-tight text-stone-900 font-mono">
               RepoPilot
             </span>
-            <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-console-elevated text-console-dim border border-console-border">
+            <span className="text-[10px] uppercase font-mono px-1 py-0.2 rounded bg-stone-100 text-stone-600 border border-stone-200">
               v1.0
             </span>
           </div>
-          <span className="text-[10.5px] text-console-muted">
+          <span className="text-[10.5px] text-stone-500 font-mono">
             Codebase Intelligence
           </span>
         </div>
@@ -123,7 +123,7 @@ export const Sidebar: React.FC = () => {
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {sections.map((sec, secIdx) => (
           <div key={secIdx}>
-            <div className="px-2 pb-1.5 text-[11px] font-mono tracking-wider text-console-dim uppercase">
+            <div className="px-2 pb-1.5 text-[10.5px] font-mono tracking-wider text-stone-400 uppercase font-semibold">
               {sec.title}
             </div>
             <div className="space-y-0.5">
@@ -136,20 +136,20 @@ export const Sidebar: React.FC = () => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center justify-between px-2.5 py-1.5 text-xs rounded transition-colors ${
+                    className={`flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md transition-colors font-mono ${
                       isActive
-                        ? "bg-console-subtle text-console-accent font-medium border-l-2 border-console-accent"
-                        : "text-console-muted hover:text-console-text hover:bg-console-subtle/60"
+                        ? "bg-[#FAFAF9] text-[#F55036] font-semibold border-l-2 border-[#F55036] shadow-xs"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className={isActive ? "text-console-accent" : "text-console-muted"}>
+                      <span className={isActive ? "text-[#F55036]" : "text-stone-500"}>
                         {item.icon}
                       </span>
                       <span>{item.name}</span>
                     </div>
                     {item.badge && (
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-console-elevated text-console-dim border border-console-border">
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-stone-100 text-stone-600 border border-stone-200">
                         {item.badge}
                       </span>
                     )}
@@ -162,9 +162,9 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Footer Info / Zero-Budget Indicator */}
-      <div className="p-3 border-t border-console-border bg-console-surface/50 text-[11px] text-console-dim font-mono flex items-center justify-between">
+      <div className="p-3 border-t border-stone-200 bg-[#FAFAF9] text-[11px] text-stone-500 font-mono flex items-center justify-between">
         <span>Zero-Budget · FOSS</span>
-        <span className="text-console-success">● Local</span>
+        <span className="text-emerald-700 font-medium">● Local Offline</span>
       </div>
     </aside>
   );

@@ -41,22 +41,23 @@ export default function GeneralSettingsPage() {
 
   const handleClearHistory = () => {
     localStorage.removeItem("REPOPILOT_RECENT_REPOS");
+    localStorage.removeItem("REPOPILOT_ACTIVE_INVESTIGATION");
     setClearedHistoryNotice(true);
     setTimeout(() => {
       setClearedHistoryNotice(false);
       window.location.reload();
-    }, 1000);
+    }, 800);
   };
 
   return (
     <div className="space-y-6 max-w-3xl">
       {/* Header */}
-      <div className="pb-3 border-b border-console-border">
-        <h1 className="text-lg font-semibold text-console-text font-mono flex items-center gap-2">
-          <SettingsIcon className="w-5 h-5 text-console-accent" />
+      <div className="pb-3 border-b border-stone-200">
+        <h1 className="text-lg font-semibold text-stone-900 font-mono flex items-center gap-2">
+          <SettingsIcon className="w-5 h-5 text-[#F55036]" />
           <span>Console Configuration & Environment</span>
         </h1>
-        <p className="text-xs text-console-muted mt-0.5">
+        <p className="text-xs text-stone-600 mt-0.5">
           Manage local secrets, GitHub rate limit quotas, and sandboxing safety policies.
         </p>
       </div>
@@ -65,22 +66,22 @@ export default function GeneralSettingsPage() {
       <Card className="p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Github className="w-4 h-4 text-console-accent" />
-            <h2 className="text-sm font-semibold text-console-text font-mono uppercase">
+            <Github className="w-4 h-4 text-[#F55036]" />
+            <h2 className="text-sm font-semibold text-stone-900 font-mono uppercase">
               GitHub Rate Limit & Optional Token
             </h2>
           </div>
-          <Badge variant="cyan" size="sm">
-            Current Quota: {rateLimit.remaining}/{rateLimit.limit}
+          <Badge variant="primary" size="sm">
+            Current Quota: {rateLimit.remaining}/{rateLimit.limit} req/hr
           </Badge>
         </div>
 
-        <p className="text-xs text-console-muted leading-relaxed font-mono">
+        <p className="text-xs text-stone-600 leading-relaxed font-mono">
           Public GitHub unauthenticated requests are limited to 60 req/hour. Supplying an optional Personal Access Token (classic with public repo read access) increases your quota to 5,000 req/hour. The token is stored strictly in your browser's LocalStorage and is never transmitted to any third party.
         </p>
 
         <div className="space-y-2 font-mono text-xs">
-          <label className="block text-console-dim">
+          <label className="block text-stone-700 font-medium">
             Personal Access Token (Optional)
           </label>
           <div className="flex gap-2">
@@ -101,7 +102,7 @@ export default function GeneralSettingsPage() {
             </Button>
           </div>
           {savedTokenNotice && (
-            <p className="text-xs text-console-success flex items-center gap-1">
+            <p className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
               <CheckCircle className="w-3.5 h-3.5" /> Token preferences saved locally.
             </p>
           )}
@@ -111,15 +112,15 @@ export default function GeneralSettingsPage() {
       {/* Security & Execution Policy Card */}
       <Card className="p-5 space-y-3 font-mono text-xs">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-console-success" />
-          <h2 className="text-sm font-semibold text-console-text uppercase">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <h2 className="text-sm font-semibold text-stone-900 uppercase">
             Security & Execution Sandbox Policy
           </h2>
         </div>
 
-        <div className="space-y-2 text-console-muted leading-relaxed">
-          <div className="flex items-center justify-between p-2.5 rounded bg-console-subtle border border-console-border">
-            <span>Automated Arbitrary Code Execution</span>
+        <div className="space-y-2 text-stone-600 leading-relaxed">
+          <div className="flex items-center justify-between p-2.5 rounded bg-stone-50 border border-stone-200">
+            <span className="font-medium text-stone-900">Automated Arbitrary Code Execution</span>
             <Badge variant="danger" size="sm">
               STRICTLY DISABLED
             </Badge>
@@ -134,13 +135,13 @@ export default function GeneralSettingsPage() {
       {/* Local Storage & History Management */}
       <Card className="p-5 space-y-3 font-mono text-xs">
         <div className="flex items-center gap-2">
-          <Trash2 className="w-4 h-4 text-console-danger" />
-          <h2 className="text-sm font-semibold text-console-text uppercase">
+          <Trash2 className="w-4 h-4 text-red-600" />
+          <h2 className="text-sm font-semibold text-stone-900 uppercase">
             Local Data & Workspace History
           </h2>
         </div>
 
-        <p className="text-console-muted">
+        <p className="text-stone-600">
           Clear cached repository history and saved configurations stored in your browser.
         </p>
 
@@ -154,7 +155,7 @@ export default function GeneralSettingsPage() {
             Clear Local Cache & Recent History
           </Button>
           {clearedHistoryNotice && (
-            <span className="text-xs text-console-danger ml-3">
+            <span className="text-xs text-red-600 ml-3 font-medium">
               History cleared. Reloading...
             </span>
           )}

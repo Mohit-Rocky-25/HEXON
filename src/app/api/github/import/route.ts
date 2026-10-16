@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
 
     const { owner, repo } = parseGitHubUrl(url);
 
-    const client = new GitHubClient();
+    const token = req.headers.get("x-github-token") || process.env.GITHUB_TOKEN;
+    const client = new GitHubClient({ token });
 
     // 1. Fetch Repository Metadata
     const repository = await client.fetchRepository(owner, repo);
