@@ -1,7 +1,27 @@
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Testing & Coverage
+coverage/
+*.lcov
+
+# Next.js Build Output
+.next/
+out/
+build/
+dist/
+
+# TypeScript Cache
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
 .DS_Store
 Thumbs.db
-dist/
 *.log
+
+# Environment Local Overrides
+.env*.local
 .env
-.env.local
