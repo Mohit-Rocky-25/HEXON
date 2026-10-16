@@ -28,15 +28,15 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      "bg-console-accent text-[#07090e] font-semibold hover:bg-console-accentHover shadow-sm active:scale-[0.98]",
+      "bg-console-accent text-white font-semibold hover:bg-console-accentHover shadow-sm active:scale-[0.98]",
     secondary:
-      "bg-console-subtle hover:bg-console-elevated text-console-text border border-console-border hover:border-console-borderHover",
+      "bg-white hover:bg-console-subtle text-console-text border border-console-border hover:border-console-borderHover shadow-xs",
     outline:
-      "bg-transparent text-console-text border border-console-border hover:bg-console-subtle hover:border-console-borderHover",
+      "bg-transparent text-console-text border border-console-border hover:bg-white hover:border-console-borderHover",
     ghost:
-      "bg-transparent text-console-muted hover:text-console-text hover:bg-console-subtle",
+      "bg-transparent text-console-muted hover:text-console-text hover:bg-stone-200/60",
     danger:
-      "bg-console-danger/10 text-console-danger border border-console-danger/30 hover:bg-console-danger/20"
+      "bg-red-50 text-console-danger border border-red-200 hover:bg-red-100"
   };
 
   return (

@@ -7,7 +7,11 @@ import { ImportModal } from "@/components/modals/ImportModal";
 import { SearchModal } from "@/components/modals/SearchModal";
 import { useRepository } from "@/context/RepositoryContext";
 
+import { usePathname } from "next/navigation";
+
 export const ShellLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const pathname = usePathname();
+  const isLandingPage = pathname === "/";
   const {
     currentRepo,
     setIsImportModalOpen,
@@ -16,8 +20,18 @@ export const ShellLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     aiConfig
   } = useRepository();
 
+  if (isLandingPage) {
+    return (
+      <div className="min-h-screen w-full bg-[#F3F3EE] text-[#0C0A09] font-sans antialiased selection:bg-[#F55036]/20">
+        {children}
+        <ImportModal />
+        <SearchModal />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-console-bg text-console-text font-sans">
+    <div className="flex h-screen w-screen overflow-hidden bg-console-bg text-console-text font-sans antialiased selection:bg-[#F55036]/20">
       {/* Pinned Left Sidebar */}
       <Sidebar />
 

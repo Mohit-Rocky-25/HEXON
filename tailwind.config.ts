@@ -5,26 +5,39 @@ const config: Config = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./packages/**/*.{js,ts,jsx,tsx,mdx}"
   ],
-  darkMode: "class",
+  darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
+        groq: {
+          bg: "#F3F3EE",
+          surface: "#FFFFFF",
+          subtle: "#F8F8F6",
+          border: "#E7E5E4",
+          borderHover: "#D6D3D1",
+          text: "#0C0A09",
+          muted: "#57534E",
+          dim: "#A8A29E",
+          coral: "#F55036",
+          coralHover: "#E03E26",
+          black: "#1E1E1E"
+        },
         console: {
-          bg: "#07090e",
-          surface: "#0d1117",
-          subtle: "#161b22",
-          elevated: "#21262d",
-          border: "#30363d",
-          borderHover: "#484f58",
-          text: "#f0f6fc",
-          muted: "#8b949e",
-          dim: "#6e7681",
-          accent: "#00f2fe",
-          accentHover: "#38bdf8",
-          violet: "#a371f7",
-          success: "#3fb950",
-          warning: "#d29922",
-          danger: "#f85149"
+          bg: "#F3F3EE",
+          surface: "#FFFFFF",
+          subtle: "#F8F8F6",
+          elevated: "#FFFFFF",
+          border: "#E7E5E4",
+          borderHover: "#D6D3D1",
+          text: "#0C0A09",
+          muted: "#57534E",
+          dim: "#A8A29E",
+          accent: "#F55036",
+          accentHover: "#E03E26",
+          violet: "#6366F1",
+          success: "#16A34A",
+          warning: "#D97706",
+          danger: "#DC2626"
         }
       },
       fontFamily: {

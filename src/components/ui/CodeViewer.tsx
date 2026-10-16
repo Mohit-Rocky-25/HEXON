@@ -33,15 +33,15 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
   };
 
   return (
-    <div className="w-full bg-[#07090e] border border-console-border rounded-md overflow-hidden font-mono text-xs">
+    <div className="w-full bg-[#FFFFFF] border border-console-border rounded-md overflow-hidden font-mono text-xs shadow-xs">
       {/* File header bar */}
-      <div className="flex items-center justify-between px-3.5 py-2 bg-console-subtle border-b border-console-border text-console-muted">
+      <div className="flex items-center justify-between px-3.5 py-2 bg-[#F8F8F6] border-b border-console-border text-console-muted">
         <div className="flex items-center gap-2 truncate">
           <span className="font-semibold text-console-text truncate">
             {filePath || "Code Snippet"}
           </span>
           {language && (
-            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-console-elevated border border-console-border text-console-dim">
+            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white border border-console-border text-console-dim">
               {language}
             </span>
           )}
@@ -51,13 +51,13 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 text-[11px] text-console-muted hover:text-console-text px-2 py-1 rounded hover:bg-console-elevated transition-colors"
+          className="flex items-center gap-1.5 text-[11px] text-console-muted hover:text-console-text px-2 py-1 rounded hover:bg-stone-200/50 transition-colors"
           title="Copy code"
         >
           {copied ? (
             <>
               <Check className="w-3.5 h-3.5 text-console-success" />
-              <span className="text-console-success">Copied</span>
+              <span className="text-console-success font-medium">Copied</span>
             </>
           ) : (
             <>
@@ -70,7 +70,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
 
       {/* Code body with line numbers */}
       <div
-        className="overflow-auto select-text"
+        className="overflow-auto select-text bg-[#FFFFFF]"
         style={{ maxHeight }}
       >
         <table className="w-full border-collapse">
@@ -85,14 +85,14 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
                   onClick={() => onLineClick?.(lineNum)}
                   className={`group transition-colors ${
                     highlighted
-                      ? "bg-console-accent/15 border-l-2 border-console-accent"
-                      : "hover:bg-console-subtle/70"
+                      ? "bg-orange-50 border-l-2 border-console-accent"
+                      : "hover:bg-[#F8F8F6]"
                   }`}
                 >
-                  <td className="w-12 select-none text-right pr-3 pl-2 py-0.5 text-console-dim group-hover:text-console-muted border-r border-console-border/40 font-mono text-[11px]">
+                  <td className="w-12 select-none text-right pr-3 pl-2 py-0.5 text-stone-400 group-hover:text-stone-600 border-r border-stone-200 font-mono text-[11px] bg-[#FAF9F7]">
                     {lineNum}
                   </td>
-                  <td className="pl-3.5 pr-4 py-0.5 whitespace-pre font-mono text-console-text leading-relaxed">
+                  <td className="pl-3.5 pr-4 py-0.5 whitespace-pre font-mono text-[#1C1917] leading-relaxed">
                     {lineContent || " "}
                   </td>
                 </tr>
