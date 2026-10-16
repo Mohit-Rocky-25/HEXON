@@ -14,6 +14,7 @@ import {
   Loader2,
   FileText
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useRepository } from "@/context/RepositoryContext";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -23,7 +24,8 @@ import type { BugHypothesis, PatchProposal } from "@repopilot/core";
 import type { ParsedTrace, StackFrame } from "@repopilot/debugging";
 
 export default function DebuggingPage() {
-  const { currentRepo, setIsImportModalOpen } = useRepository();
+  const router = useRouter();
+  const { currentRepo, setIsImportModalOpen, setActiveInvestigation } = useRepository();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -77,6 +79,25 @@ export default function DebuggingPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const handleSendToPatchReview = () => {
+    if (!analysisResult || !currentRepo) return;
+    setActiveInvestigation({
+      id: "inv-" + Date.now(),
+      repoKey: currentRepo.fullName,
+      commitSha: currentRepo.selectedRevision || "HEAD",
+      title: title || "Runtime Exception",
+      description,
+      stackTrace,
+      parsedTrace: analysisResult.parsedTrace,
+      hypotheses: analysisResult.hypotheses,
+      candidatePatch: analysisResult.candidatePatch,
+      suggestedTests: analysisResult.suggestedTests,
+      reproducibleReport: analysisResult.reproducibleReport,
+      createdAt: new Date().toISOString()
+    });
+    router.push("/patches");
   };
 
   if (!currentRepo) {
@@ -344,7 +365,7 @@ export default function DebuggingPage() {
           )}
 
           {/* Actions: Copy Report & PR draft */}
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
             <Button
               variant="secondary"
               size="sm"
@@ -353,6 +374,17 @@ export default function DebuggingPage() {
             >
               {copied ? "Copied Report!" : "Copy Markdown Report"}
             </Button>
+
+            {analysisResult.candidatePatch && (
+              <Button
+                variant="primary"
+                size="sm"
+                icon={<GitPullRequest className="w-3.5 h-3.5" />}
+                onClick={handleSendToPatchReview}
+              >
+                Send Candidate Patch to Patch Review →
+              </Button>
+            )}
           </div>
         </div>
       )}

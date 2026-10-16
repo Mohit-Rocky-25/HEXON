@@ -3,6 +3,25 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { RepositoryReference, RepositoryFile, AIProviderConfiguration } from "@repopilot/core";
 
+export interface ActiveInvestigation {
+  id: string;
+  repoKey: string;
+  commitSha: string;
+  title: string;
+  description: string;
+  stackTrace: string;
+  parsedTrace: any;
+  hypotheses: any[];
+  candidatePatch?: {
+    filePath: string;
+    diff: string;
+    rationale: string;
+  };
+  suggestedTests: string[];
+  reproducibleReport: string;
+  createdAt: string;
+}
+
 interface RepositoryContextType {
   currentRepo: RepositoryReference | null;
   setCurrentRepo: (repo: RepositoryReference | null) => void;
@@ -10,6 +29,8 @@ interface RepositoryContextType {
   setFiles: (files: RepositoryFile[]) => void;
   recentRepos: RepositoryReference[];
   saveRecentRepo: (repo: RepositoryReference) => void;
+  activeInvestigation: ActiveInvestigation | null;
+  setActiveInvestigation: (inv: ActiveInvestigation | null) => void;
   isImportModalOpen: boolean;
   setIsImportModalOpen: (open: boolean) => void;
   isSearchModalOpen: boolean;
@@ -39,6 +60,8 @@ export const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     isAvailable: false
   });
 
+  const [activeInvestigation, setActiveInvestigationState] = useState<ActiveInvestigation | null>(null);
+
   // Load persisted active repo & history on mount
   useEffect(() => {
     try {
@@ -51,6 +74,11 @@ export const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }
       }
 
+      const storedInvestigation = localStorage.getItem("REPOPILOT_ACTIVE_INVESTIGATION");
+      if (storedInvestigation) {
+        setActiveInvestigationState(JSON.parse(storedInvestigation));
+      }
+
       const storedAi = localStorage.getItem("REPOPILOT_AI_CONFIG");
       if (storedAi) {
         setAiConfig(JSON.parse(storedAi));
@@ -60,7 +88,23 @@ export const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, []);
 
+  const setActiveInvestigation = (inv: ActiveInvestigation | null) => {
+    setActiveInvestigationState(inv);
+    try {
+      if (inv) {
+        localStorage.setItem("REPOPILOT_ACTIVE_INVESTIGATION", JSON.stringify(inv));
+      } else {
+        localStorage.removeItem("REPOPILOT_ACTIVE_INVESTIGATION");
+      }
+    } catch (e) {}
+  };
+
   const saveRecentRepo = (repo: RepositoryReference) => {
+    // Clear files and active investigation if switching to a different repo
+    if (!currentRepo || currentRepo.fullName !== repo.fullName) {
+      setFiles([]);
+      setActiveInvestigation(null);
+    }
     setCurrentRepo(repo);
     setRecentRepos((prev) => {
       const filtered = prev.filter((r) => r.fullName !== repo.fullName);
@@ -93,6 +137,8 @@ export const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setFiles,
         recentRepos,
         saveRecentRepo,
+        activeInvestigation,
+        setActiveInvestigation,
         isImportModalOpen,
         setIsImportModalOpen,
         isSearchModalOpen,

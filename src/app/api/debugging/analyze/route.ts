@@ -14,7 +14,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const client = new GitHubClient();
+    const token = req.headers.get("x-github-token") || process.env.GITHUB_TOKEN;
+    const client = new GitHubClient({ token });
     const tree = await client.fetchTree(owner, repo, sha || "HEAD");
     const repoFilePaths = tree.map((f) => f.path);
 
