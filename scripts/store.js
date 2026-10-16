@@ -1,9 +1,9 @@
 /**
- * HEXON Workplace - State Store & LocalStorage Persistence
+ * Repo Pilot Workplace - State Store & LocalStorage Persistence
  */
 
 const DEFAULT_STATE = {
-  workplaceName: "HEXON Workplace",
+  workplaceName: "Repo Pilot Workplace",
   currentView: "dashboard",
   theme: "default",
   metrics: {
@@ -15,7 +15,7 @@ const DEFAULT_STATE = {
   tasks: [
     {
       id: "task-1",
-      title: "Initialize HEXON Core Architecture",
+      title: "Initialize Repo Pilot Core Architecture",
       desc: "Establish scalable modular foundation, state store, and glassmorphic UI tokens.",
       column: "done",
       priority: "urgent",
@@ -66,8 +66,8 @@ const DEFAULT_STATE = {
   ],
   messages: {
     general: [
-      { id: "m1", author: "Hexon Bot", initials: "HX", time: "10:14 AM", text: "Welcome to HEXON Workplace. All systems nominal, sprint velocity at 94.2%." },
-      { id: "m2", author: "Alex Rivera", initials: "AR", time: "10:20 AM", text: "Team, the new HEXON workspace environment is live. Feel free to log tasks and join the huddle." }
+      { id: "m1", author: "Repo Pilot Bot", initials: "RP", time: "10:14 AM", text: "Welcome to Repo Pilot Workplace. All systems nominal, sprint velocity at 94.2%." },
+      { id: "m2", author: "Alex Rivera", initials: "AR", time: "10:20 AM", text: "Team, the new Repo Pilot workspace environment is live. Feel free to log tasks and join the huddle." }
     ],
     engineering: [
       { id: "m3", author: "Sarah Chen", initials: "SC", time: "11:05 AM", text: "Branch for Sprint Board transitions is merged. Ready for QA review." },
@@ -80,12 +80,12 @@ const DEFAULT_STATE = {
   docs: [
     {
       id: "doc-1",
-      title: "HEXON Workplace Architecture & Specs",
+      title: "Repo Pilot Workplace Architecture & Specs",
       category: "Architecture",
-      content: `# HEXON Workplace Architecture Specification
+      content: `# Repo Pilot Workplace Architecture Specification
 
 ## Overview
-HEXON is a unified collaborative workplace platform engineered for high-velocity teams.
+Repo Pilot is a unified collaborative workplace platform engineered for high-velocity teams.
 
 ### Core Modules
 1. **Command Dashboard**: Live telemetry, sprint tracking, and activity feed.
@@ -118,12 +118,16 @@ HEXON is a unified collaborative workplace platform engineered for high-velocity
 
 class Store {
   constructor() {
-    const saved = localStorage.getItem("HEXON_STATE");
+    const saved = localStorage.getItem("REPO_PILOT_STATE") || localStorage.getItem("HEXON_STATE");
     this.state = saved ? JSON.parse(saved) : DEFAULT_STATE;
+    // Ensure workplaceName is updated if migrated from legacy storage
+    if (this.state && (this.state.workplaceName === "HEXON Workplace" || !this.state.workplaceName)) {
+      this.state.workplaceName = "Repo Pilot Workplace";
+    }
   }
 
   save() {
-    localStorage.setItem("HEXON_STATE", JSON.stringify(this.state));
+    localStorage.setItem("REPO_PILOT_STATE", JSON.stringify(this.state));
   }
 
   getState() {
@@ -176,4 +180,5 @@ class Store {
   }
 }
 
-window.hexonStore = new Store();
+window.repoPilotStore = new Store();
+window.hexonStore = window.repoPilotStore; // Backwards compatibility

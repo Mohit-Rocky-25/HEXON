@@ -1,10 +1,10 @@
-# HEXON Workplace 🪐
+# Repo Pilot Workplace 🪐
 
 > Next-Generation Collaborative Operating Hub & Digital Workplace
 
-HEXON Workplace is a modern, high-velocity digital workplace engineered with sleek cyber-obsidian glassmorphism, instant local reactivity, and unified telemetry.
+Repo Pilot Workplace is a modern, high-velocity digital workplace engineered with sleek cyber-obsidian glassmorphism, instant local reactivity, and unified telemetry.
 
-![HEXON Workplace Banner](assets/hexon_banner.jpg)
+![Repo Pilot Workplace Banner](assets/repo_pilot_banner.jpg)
 
 ---
 
@@ -23,19 +23,19 @@ HEXON Workplace is a modern, high-velocity digital workplace engineered with sle
 ## 📁 Project Architecture
 
 ```
-HEXON/
+REPO PILOT/
 ├── .vscode/
 │   ├── settings.json          # Workspace format & editor preferences
 │   └── extensions.json        # Recommended IDE extensions
 ├── assets/
-│   ├── hexon_logo.jpg         # Custom 3D brand emblem
-│   └── hexon_banner.jpg       # Cyber command center hero visual
+│   ├── repo_pilot_logo.jpg    # Custom 3D brand emblem
+│   └── repo_pilot_banner.jpg  # Cyber command center hero visual
 ├── scripts/
 │   ├── store.js               # Reactive state manager & LocalStorage persistence
 │   └── app.js                 # UI controllers, modal dialogs & chat bot logic
 ├── styles/
 │   └── main.css               # Design tokens, cyber obsidian glassmorphism & responsive grid
-├── HEXON.code-workspace       # VS Code / Antigravity workspace definition
+├── REPO_PILOT.code-workspace  # VS Code / Antigravity workspace definition
 ├── index.html                 # Main application interface
 ├── package.json               # Project manifest & npm scripts
 └── README.md                  # Workplace documentation
@@ -48,7 +48,7 @@ HEXON/
 ### 1. Open with Browser
 Simply double-click `index.html` or open it with your favorite browser:
 ```powershell
-Start-Process "C:\Users\yadav\Documents\HEXON\index.html"
+Start-Process "index.html"
 ```
 
 ### 2. Run with Dev Server (Optional)
@@ -60,8 +60,8 @@ npm run dev
 
 ### 3. Open as VS Code / Antigravity Workspace
 You can open this project directly in your editor via:
-- `HEXON.code-workspace`
-- Or `File -> Open Folder -> C:\Users\yadav\Documents\HEXON`
+- `REPO_PILOT.code-workspace`
+- Or `File -> Open Folder`
 
 ---
 

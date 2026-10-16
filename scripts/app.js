@@ -1,9 +1,9 @@
 /**
- * HEXON Workplace - Application Logic & Controllers
+ * Repo Pilot Workplace - Application Logic & Controllers
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const store = window.hexonStore;
+  const store = window.repoPilotStore || window.hexonStore;
   let activeChannel = "general";
   let activeDocId = store.getState().docs[0]?.id || null;
   let currentFilter = "all";
@@ -52,11 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
           dashboard: "Command Dashboard",
           kanban: "Sprint Task Board",
           chat: "Team Channels & Chat",
-          docs: "HEXON Knowledge Hub",
+          docs: "Repo Pilot Knowledge Hub",
           team: "Team Radar & Directory",
           settings: "Workplace Settings"
         };
-        viewTitle.textContent = viewNames[targetView] || "HEXON Workplace";
+        viewTitle.textContent = viewNames[targetView] || "Repo Pilot Workplace";
 
         // Refresh dynamic view contents
         if (targetView === "kanban") renderKanban();
@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Simulated Intelligent Response
       setTimeout(() => {
         const smartReplies = [
-          "Noted! Updating sprint milestone status on HEXON core.",
+          "Noted! Updating sprint milestone status on Repo Pilot core.",
           "Acknowledged. Telemetry metrics remain within optimal bounds.",
           "Great point. I've synced this update with the team.",
           "Confirmed! Ready to deploy updates across active nodes."
@@ -284,8 +284,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         store.addMessage(activeChannel, {
           id: "msg-ai-" + Date.now(),
-          author: "HEXON Neural Bot",
-          initials: "HX",
+          author: "Repo Pilot Neural Bot",
+          initials: "RP",
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           text: replyText
         });
@@ -373,15 +373,16 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="team-name">${escapeHTML(member.name)}</div>
         <div class="team-role-tag">${escapeHTML(member.role)}</div>
         <div class="team-status-line">Status: ${escapeHTML(member.status)}</div>
-        <button class="btn-secondary" style="width: 100%; justify-content: center; font-size: 0.8rem;" onclick="window.hexonNavigateToChat()">Direct Message</button>
+        <button class="btn-secondary" style="width: 100%; justify-content: center; font-size: 0.8rem;" onclick="window.repoPilotNavigateToChat()">Direct Message</button>
       </div>
     `).join("");
   }
 
-  window.hexonNavigateToChat = () => {
+  window.repoPilotNavigateToChat = () => {
     const chatNavItem = document.querySelector('.nav-item[data-view="chat"]');
     if (chatNavItem) chatNavItem.click();
   };
+  window.hexonNavigateToChat = window.repoPilotNavigateToChat;
 
   /* ==========================================================================
      Modals Setup
@@ -437,7 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeModal();
         renderKanban();
         renderDashboard();
-        showToast("New task logged to HEXON Board");
+        showToast("New task logged to Repo Pilot Board");
       };
     }
   }
@@ -471,7 +472,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.getElementById("globalSearchInput");
         if (searchInput) {
           searchInput.focus();
-          showToast("Search HEXON Command Center");
+          showToast("Search Repo Pilot Command Center");
         }
       }
     });
