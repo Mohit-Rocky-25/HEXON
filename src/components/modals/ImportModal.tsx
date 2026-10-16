@@ -1,22 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Github, ArrowRight, AlertCircle, CheckCircle, Sparkles } from "lucide-react";
+import { X, Github, ArrowRight, AlertCircle, CheckCircle, Sparkles, GitBranch, Clock } from "lucide-react";
 import { GitHubUrlSchema } from "@repopilot/core";
 import { useRepository } from "@/context/RepositoryContext";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 
-const SUGGESTED_REPOS = [
-  { name: "facebook/react", url: "https://github.com/facebook/react", lang: "JavaScript", desc: "React library" },
-  { name: "pallets/flask", url: "https://github.com/pallets/flask", lang: "Python", desc: "Python microframework" },
-  { name: "expressjs/express", url: "https://github.com/expressjs/express", lang: "JavaScript", desc: "Node web framework" },
-  { name: "fastapi/fastapi", url: "https://github.com/fastapi/fastapi", lang: "Python", desc: "High performance API framework" }
-];
-
 export const ImportModal: React.FC = () => {
-  const { isImportModalOpen, setIsImportModalOpen, saveRecentRepo, setRateLimit } = useRepository();
+  const { isImportModalOpen, setIsImportModalOpen, saveRecentRepo, setRateLimit, recentRepos } = useRepository();
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -56,42 +49,42 @@ export const ImportModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-xl bg-console-surface border border-console-border rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+      <div className="w-full max-w-xl bg-white border border-stone-200 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-console-border">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded bg-console-accent/15 border border-console-accent/40 flex items-center justify-center text-console-accent">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-200">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-[#F55036]">
               <Github className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-console-text">
+              <h3 className="text-base font-semibold text-stone-900 tracking-tight">
                 Import Public GitHub Repository
               </h3>
-              <p className="text-xs text-console-muted">
-                Analyze architecture, browse tree, and search code with zero API costs.
+              <p className="text-xs text-stone-500">
+                Explore file structure, deterministic symbols, and evidence-grounded analysis.
               </p>
             </div>
           </div>
           <button
             onClick={() => setIsImportModalOpen(false)}
-            className="text-console-muted hover:text-console-text p-1 rounded hover:bg-console-subtle"
+            className="text-stone-400 hover:text-stone-700 p-1.5 rounded-md hover:bg-stone-100 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form Body */}
-        <div className="p-5 space-y-4">
+        <div className="p-6 space-y-5">
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleImport(url);
+              if (url.trim()) handleImport(url.trim());
             }}
             className="space-y-3"
           >
             <div>
-              <label className="block text-xs font-mono text-console-muted mb-1.5">
+              <label className="block text-xs font-mono font-medium text-stone-700 mb-1.5">
                 GitHub Repository URL
               </label>
               <Input
@@ -108,13 +101,13 @@ export const ImportModal: React.FC = () => {
             </div>
 
             {error && (
-              <div className="flex items-start gap-2 p-3 rounded bg-console-danger/10 border border-console-danger/30 text-console-danger text-xs font-mono">
+              <div className="flex items-start gap-2 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-xs font-mono">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <div className="leading-relaxed">{error}</div>
               </div>
             )}
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2.5 pt-2">
               <Button
                 type="button"
                 variant="ghost"
@@ -136,45 +129,60 @@ export const ImportModal: React.FC = () => {
             </div>
           </form>
 
-          {/* Quick Suggestions */}
-          <div className="pt-3 border-t border-console-border">
-            <span className="text-[11px] font-mono text-console-dim uppercase tracking-wider block mb-2">
-              Popular Open-Source Starters:
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              {SUGGESTED_REPOS.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => {
-                    setUrl(item.url);
-                    handleImport(item.url);
-                  }}
-                  disabled={loading}
-                  className="flex flex-col text-left p-2.5 rounded bg-console-subtle hover:bg-console-elevated border border-console-border transition-colors group"
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-xs font-mono font-medium text-console-text group-hover:text-console-accent">
-                      {item.name}
+          {/* Real User Recents or Honest Instructions (Zero Fake Data) */}
+          {recentRepos && recentRepos.length > 0 ? (
+            <div className="pt-4 border-t border-stone-200">
+              <span className="text-[11px] font-mono text-stone-500 uppercase tracking-wider block mb-2 flex items-center gap-1.5">
+                <Clock className="w-3 h-3" />
+                <span>Recently Loaded Repositories ({recentRepos.length})</span>
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {recentRepos.slice(0, 4).map((item) => (
+                  <button
+                    key={item.fullName}
+                    onClick={() => {
+                      setUrl(item.url);
+                      handleImport(item.url);
+                    }}
+                    disabled={loading}
+                    className="flex flex-col text-left p-3 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition-colors group"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-xs font-mono font-medium text-stone-900 group-hover:text-[#F55036] truncate">
+                        {item.fullName}
+                      </span>
+                      {item.primaryLanguage && (
+                        <Badge variant="cyan" size="sm">
+                          {item.primaryLanguage}
+                        </Badge>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-stone-500 truncate mt-1">
+                      {item.description || "No description provided"}
                     </span>
-                    <Badge variant="cyan" size="sm">
-                      {item.lang}
-                    </Badge>
-                  </div>
-                  <span className="text-[11px] text-console-muted truncate mt-0.5">
-                    {item.desc}
-                  </span>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="pt-4 border-t border-stone-200 text-xs font-mono text-stone-500 space-y-1.5">
+              <span className="font-semibold text-stone-700 block">Repository Requirements:</span>
+              <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] text-stone-600">
+                <li>Repository must be publicly hosted on GitHub.com.</li>
+                <li>Tree is pinned to default branch SHA for reproducible inspection.</li>
+                <li>Zero API charges: utilizes GitHub unauthenticated public REST quota.</li>
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Footer info */}
-        <div className="px-5 py-2.5 bg-console-subtle border-t border-console-border text-[11px] text-console-dim font-mono flex items-center justify-between">
-          <span>Public Unauthenticated REST API Rate Limit Aware</span>
-          <span className="text-console-accent">₹0 Spend</span>
+        <div className="px-6 py-3 bg-[#F8F8F6] border-t border-stone-200 text-[11px] text-stone-500 font-mono flex items-center justify-between">
+          <span>Unauthenticated REST API · Rate Limit Aware</span>
+          <span className="text-[#F55036] font-medium">₹0 Zero Budget</span>
         </div>
       </div>
     </div>
   );
 };
+

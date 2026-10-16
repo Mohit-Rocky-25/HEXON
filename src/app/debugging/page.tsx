@@ -22,22 +22,12 @@ import { Badge } from "@/components/ui/Badge";
 import type { BugHypothesis, PatchProposal } from "@repopilot/core";
 import type { ParsedTrace, StackFrame } from "@repopilot/debugging";
 
-const SAMPLE_NODE_TRACE = `TypeError: Cannot read properties of undefined (reading 'items')
-    at renderDashboard (src/components/Dashboard.tsx:42:18)
-    at App (src/app/page.tsx:28:12)
-    at mountRoot (node_modules/react-dom/cjs/react-dom.production.min.js:12:4)`;
-
-const SAMPLE_PY_TRACE = `Traceback (most recent call last):
-  File "src/server.py", line 18, in handle_request
-  File "src/services/auth.py", line 45, in verify_token
-KeyError: 'user_id'`;
-
 export default function DebuggingPage() {
   const { currentRepo, setIsImportModalOpen } = useRepository();
 
-  const [title, setTitle] = useState("Unhandled TypeError in component rendering");
-  const [description, setDescription] = useState("Dashboard crashes when navigating without initialized items array.");
-  const [stackTrace, setStackTrace] = useState(SAMPLE_NODE_TRACE);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [stackTrace, setStackTrace] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -158,36 +148,19 @@ export default function DebuggingPage() {
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="text-xs font-mono text-console-muted">
+            <label className="text-xs font-mono text-stone-700 font-medium">
               Stack Trace / Error Log
             </label>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono text-console-dim">
-                Quick Sample:
-              </span>
-              <button
-                type="button"
-                onClick={() => setStackTrace(SAMPLE_NODE_TRACE)}
-                className="text-[11px] font-mono text-console-accent hover:underline"
-              >
-                Node/TS Trace
-              </button>
-              <span className="text-console-dim">·</span>
-              <button
-                type="button"
-                onClick={() => setStackTrace(SAMPLE_PY_TRACE)}
-                className="text-[11px] font-mono text-console-accent hover:underline"
-              >
-                Python Trace
-              </button>
-            </div>
+            <span className="text-[11px] font-mono text-stone-500">
+              Format: Node/V8, Python tracebacks, Go panics, Rust backtraces
+            </span>
           </div>
           <textarea
             rows={5}
             value={stackTrace}
             onChange={(e) => setStackTrace(e.target.value)}
-            className="w-full bg-[#07090e] border border-console-border text-console-text font-mono text-xs p-3 rounded focus:outline-none focus:border-console-accent"
-            placeholder="Paste stack trace or error log here..."
+            className="w-full bg-white border border-stone-200 text-stone-900 font-mono text-xs p-3 rounded-md focus:outline-none focus:border-[#F55036] focus:ring-1 focus:ring-[#F55036] placeholder:text-stone-400"
+            placeholder="Paste your actual runtime error log or stack trace here (e.g. TypeError: Cannot read properties of undefined...)"
           />
         </div>
 
@@ -325,8 +298,8 @@ export default function DebuggingPage() {
               </p>
 
               {/* Unified Diff View */}
-              <div className="bg-[#07090e] border border-console-border rounded-md p-3 overflow-x-auto font-mono text-xs">
-                <pre className="text-console-text">
+              <div className="bg-[#FAFAF9] border border-stone-200 rounded-md p-3 overflow-x-auto font-mono text-xs">
+                <pre className="text-stone-900 leading-relaxed">
                   {analysisResult.candidatePatch.diff.split("\n").map((line, idx) => {
                     const isAdd = line.startsWith("+");
                     const isDel = line.startsWith("-");
@@ -335,10 +308,10 @@ export default function DebuggingPage() {
                         key={idx}
                         className={
                           isAdd
-                            ? "bg-console-success/15 text-console-success"
+                            ? "bg-emerald-50 text-emerald-800 font-medium px-1 rounded-xs"
                             : isDel
-                            ? "bg-console-danger/15 text-console-danger"
-                            : "text-console-dim"
+                            ? "bg-red-50 text-red-800 font-medium px-1 rounded-xs"
+                            : "text-stone-600"
                         }
                       >
                         {line || " "}
