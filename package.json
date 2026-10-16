@@ -1,0 +1,20 @@
+{
+  "name": "hexon-workplace",
+  "version": "1.0.0",
+  "description": "HEXON - Next-Gen Collaborative Digital Workplace & Productivity Platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -l 3000 .",
+    "dev": "npx serve -l 3000 ."
+  },
+  "keywords": [
+    "hexon",
+    "workplace",
+    "productivity",
+    "kanban",
+    "collaboration",
+    "dashboard"
+  ],
+  "author": "HEXON Team",
+  "license": "MIT"
+}
