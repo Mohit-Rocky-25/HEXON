@@ -19,8 +19,9 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { SearchResult } from "@repopilot/core";
 import { SearchEngine } from "@repopilot/search";
+import { Suspense } from "react";
 
-export default function SearchPage() {
+function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
@@ -244,5 +245,19 @@ export default function SearchPage() {
         ) : null}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs font-mono text-console-muted">
+          Loading Search Console...
+        </div>
+      }
+    >
+      <SearchContent />
+    </Suspense>
   );
 }

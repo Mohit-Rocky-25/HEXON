@@ -14,7 +14,14 @@ export interface SearchCorpus {
 export class SearchEngine {
   constructor(private corpus: SearchCorpus) {}
 
-  search(queryObj: SearchQuery): SearchResult[] {
+  search(queryObj: {
+    query: string;
+    type?: "all" | "symbol" | "path" | "text";
+    pathPrefix?: string;
+    language?: string;
+    caseSensitive?: boolean;
+    limit?: number;
+  }): SearchResult[] {
     const { query, type = "all", pathPrefix, language, caseSensitive = false, limit = 30 } =
       queryObj;
     const q = caseSensitive ? query : query.toLowerCase();

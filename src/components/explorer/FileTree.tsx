@@ -67,7 +67,7 @@ export const FileTree: React.FC<FileTreeProps> = ({
     });
   };
 
-  const renderNode = (node: FileNode, depth: number = 0) => {
+  const renderNode = (node: FileNode, depth: number = 0): React.ReactNode => {
     const isFolder = node.type === "tree";
     const isExpanded = expandedFolders.has(node.path) || Boolean(filterText);
     const isSelected = selectedPath === node.path;

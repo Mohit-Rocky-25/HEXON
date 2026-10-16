@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import type { BugHypothesis, PatchProposal } from "@repopilot/core";
-import type { ParsedTrace } from "@/packages/debugging/src/stackTraceParser";
+import type { ParsedTrace, StackFrame } from "@repopilot/debugging";
 
 const SAMPLE_NODE_TRACE = `TypeError: Cannot read properties of undefined (reading 'items')
     at renderDashboard (src/components/Dashboard.tsx:42:18)
@@ -228,7 +228,7 @@ export default function DebuggingPage() {
             </div>
 
             <div className="divide-y divide-console-border border border-console-border rounded-md overflow-hidden font-mono text-xs">
-              {analysisResult.parsedTrace.frames.map((frame, idx) => (
+              {analysisResult.parsedTrace.frames.map((frame: StackFrame, idx: number) => (
                 <div
                   key={idx}
                   className="flex items-center justify-between p-2.5 bg-console-surface hover:bg-console-subtle/60 transition-colors"

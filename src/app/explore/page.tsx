@@ -20,8 +20,9 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { RepositoryFile, IndexedSymbol } from "@repopilot/core";
 import { extractSymbols } from "@repopilot/indexer";
+import { Suspense } from "react";
 
-export default function ExplorePage() {
+function ExploreContent() {
   const searchParams = useSearchParams();
   const initialFilePath = searchParams.get("file");
   const initialLine = searchParams.get("line") ? parseInt(searchParams.get("line")!, 10) : undefined;
@@ -258,5 +259,19 @@ export default function ExplorePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ExplorePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs font-mono text-console-muted">
+          Loading Code Explorer...
+        </div>
+      }
+    >
+      <ExploreContent />
+    </Suspense>
   );
 }
