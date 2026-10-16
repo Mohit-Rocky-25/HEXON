@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --console-bg: #07090e;
+    --console-surface: #0d1117;
+    --console-subtle: #161b22;
+    --console-elevated: #21262d;
+    --console-border: #30363d;
+    --console-border-hover: #484f58;
+    --console-text: #f0f6fc;
+    --console-muted: #8b949e;
+    --console-dim: #6e7681;
+    --console-accent: #00f2fe;
+    --console-accent-hover: #38bdf8;
+    --console-violet: #a371f7;
+    --console-success: #3fb950;
+    --console-warning: #d29922;
+    --console-danger: #f85149;
+  }
+
+  body {
+    background-color: var(--console-bg);
+    color: var(--console-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Sleek developer console scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #07090e;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #21262d;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #30363d;
+  }
+}
+
+/* Monospace code highlights */
+pre, code, kbd, samp {
+  font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}

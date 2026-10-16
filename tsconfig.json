@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@repopilot/core": ["./packages/core/src/index.ts"],
+      "@repopilot/core/*": ["./packages/core/src/*"],
+      "@repopilot/github": ["./packages/github/src/index.ts"],
+      "@repopilot/github/*": ["./packages/github/src/*"],
+      "@repopilot/indexer": ["./packages/indexer/src/index.ts"],
+      "@repopilot/indexer/*": ["./packages/indexer/src/*"],
+      "@repopilot/search": ["./packages/search/src/index.ts"],
+      "@repopilot/search/*": ["./packages/search/src/*"],
+      "@repopilot/analysis": ["./packages/analysis/src/index.ts"],
+      "@repopilot/analysis/*": ["./packages/analysis/src/*"],
+      "@repopilot/ai": ["./packages/ai/src/index.ts"],
+      "@repopilot/ai/*": ["./packages/ai/src/*"],
+      "@repopilot/debugging": ["./packages/debugging/src/index.ts"],
+      "@repopilot/debugging/*": ["./packages/debugging/src/*"],
+      "@repopilot/storage": ["./packages/storage/src/index.ts"],
+      "@repopilot/storage/*": ["./packages/storage/src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "legacy-prototype"
+  ]
+}
