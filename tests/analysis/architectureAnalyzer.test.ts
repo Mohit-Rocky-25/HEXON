@@ -66,4 +66,22 @@ describe("Architecture Analyzer", () => {
     expect(compMod).toBeDefined();
     expect(compMod?.description).toContain("Components");
   });
+
+  it("generates deterministic 3D spatial graph with nodes and edges", () => {
+    const graph = ArchitectureAnalyzer.generateGraph(mockFiles, "test/repo");
+    expect(graph.nodes.length).toBeGreaterThanOrEqual(4);
+    expect(graph.edges.length).toBeGreaterThan(0);
+
+    const rootNode = graph.nodes.find((n) => n.id === "node-root");
+    expect(rootNode).toBeDefined();
+    expect(rootNode?.type).toBe("root");
+
+    const entryNode = graph.nodes.find((n) => n.path === "src/index.ts");
+    expect(entryNode).toBeDefined();
+    expect(entryNode?.type).toBe("entry");
+
+    const compNode = graph.nodes.find((n) => n.path === "src/components/Header.tsx");
+    expect(compNode).toBeDefined();
+    expect(compNode?.type).toBe("component");
+  });
 });

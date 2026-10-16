@@ -11,7 +11,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "owner and repo are required." }, { status: 400 });
     }
 
-    const client = new GitHubClient();
+    const token = req.headers.get("x-github-token") || process.env.GITHUB_TOKEN;
+    const client = new GitHubClient({ token });
     const tree = await client.fetchTree(owner, repo, sha || "HEAD");
 
     // Attempt to load package.json or requirements.txt if present
@@ -34,10 +35,12 @@ export async function POST(req: NextRequest) {
     }
 
     const summary = ArchitectureAnalyzer.analyze(tree, manifestContent);
+    const graph = ArchitectureAnalyzer.generateGraph(tree, `${owner}/${repo}`);
 
     return NextResponse.json({
       success: true,
       summary,
+      graph,
       rateLimit: client.lastRateLimit
     });
   } catch (error: any) {

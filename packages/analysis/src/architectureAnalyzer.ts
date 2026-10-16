@@ -1,4 +1,10 @@
-import type { RepositoryFile, ArchitectureSummary } from "@repopilot/core";
+import type {
+  RepositoryFile,
+  ArchitectureSummary,
+  ArchitectureGraph,
+  ArchitectureGraphNode,
+  ArchitectureGraphEdge
+} from "@repopilot/core";
 
 export class ArchitectureAnalyzer {
   static analyze(files: RepositoryFile[], manifestContent?: string): ArchitectureSummary {
@@ -133,6 +139,182 @@ export class ArchitectureAnalyzer {
       keyModules,
       dependencies: dependencies.slice(0, 50)
     };
+  }
+
+  static generateGraph(files: RepositoryFile[], repoName: string): ArchitectureGraph {
+    const nodes: ArchitectureGraphNode[] = [];
+    const edges: ArchitectureGraphEdge[] = [];
+    const nodeMap = new Set<string>();
+
+    const rootId = "node-root";
+    nodes.push({
+      id: rootId,
+      name: repoName || "Repository Root",
+      path: "",
+      type: "root",
+      depth: 0,
+      x: 0,
+      y: 0,
+      z: 0
+    });
+    nodeMap.add(rootId);
+
+    const classifyType = (path: string): ArchitectureGraphNode["type"] => {
+      const p = path.toLowerCase();
+      if (
+        p.endsWith("index.ts") ||
+        p.endsWith("index.js") ||
+        p.endsWith("main.ts") ||
+        p.endsWith("main.py") ||
+        p.endsWith("app/page.tsx") ||
+        p.endsWith("main.go")
+      ) {
+        return "entry";
+      }
+      if (p.includes("/api/") || p.includes("/routes/") || p.endsWith("route.ts")) {
+        return "route";
+      }
+      if (p.includes("/components/") || p.endsWith("button.tsx") || p.endsWith("card.tsx") || p.endsWith("modal.tsx")) {
+        return "component";
+      }
+      if (p.includes("test") || p.includes("spec") || p.endsWith(".test.ts") || p.endsWith(".spec.js")) {
+        return "test";
+      }
+      if (
+        p.endsWith("package.json") ||
+        p.endsWith("tsconfig.json") ||
+        p.endsWith("tailwind.config.ts") ||
+        p.endsWith(".env.example") ||
+        p.endsWith("dockerfile") ||
+        p.endsWith("cargo.toml")
+      ) {
+        return "config";
+      }
+      return "source";
+    };
+
+    const dirCounts = new Map<string, number>();
+    for (const f of files) {
+      const parts = f.path.split("/");
+      if (parts.length > 1) {
+        const d1 = parts[0];
+        dirCounts.set(d1, (dirCounts.get(d1) || 0) + 1);
+        if (parts.length > 2 && (d1 === "src" || d1 === "packages" || d1 === "app")) {
+          const d2 = `${d1}/${parts[1]}`;
+          dirCounts.set(d2, (dirCounts.get(d2) || 0) + 1);
+        }
+      }
+    }
+
+    const keyDirs = Array.from(dirCounts.keys())
+      .filter((d) => !d.startsWith("."))
+      .slice(0, 16);
+
+    const dirNodeMap = new Map<string, string>();
+
+    keyDirs.forEach((dir, idx) => {
+      const angle = (2 * Math.PI * idx) / Math.max(keyDirs.length, 1);
+      const radius = 180 + (idx % 2 === 0 ? 30 : -20);
+      const dirId = `dir-${dir.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
+      const depth = dir.split("/").length;
+
+      const node: ArchitectureGraphNode = {
+        id: dirId,
+        name: dir,
+        path: dir,
+        type: "dir",
+        depth,
+        x: Math.round(Math.cos(angle) * radius),
+        y: Math.round(Math.sin(angle) * radius),
+        z: Math.round((idx % 3 - 1) * 35)
+      };
+
+      nodes.push(node);
+      nodeMap.add(dirId);
+      dirNodeMap.set(dir, dirId);
+
+      const parentDir = dir.includes("/") ? dir.split("/")[0] : null;
+      const parentId = parentDir && dirNodeMap.has(parentDir) ? dirNodeMap.get(parentDir)! : rootId;
+
+      edges.push({
+        source: parentId,
+        target: dirId,
+        type: "contains"
+      });
+    });
+
+    const scoredFiles = files
+      .filter((f) => !f.path.startsWith(".") && !f.path.includes("node_modules/"))
+      .map((f) => {
+        const type = classifyType(f.path);
+        let score = 0;
+        if (type === "entry") score = 100;
+        else if (type === "config") score = 80;
+        else if (type === "route") score = 70;
+        else if (type === "component") score = 60;
+        else if (type === "test") score = 50;
+        else score = 10;
+        return { file: f, type, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 80);
+
+    scoredFiles.forEach(({ file, type }, idx) => {
+      const fileId = `file-${file.path.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
+      if (nodeMap.has(fileId)) return;
+
+      const parts = file.path.split("/");
+      const fileName = parts.pop() || file.path;
+
+      let parentNodeId = rootId;
+      let parentX = 0;
+      let parentY = 0;
+      let parentZ = 0;
+
+      for (const [dir, dId] of dirNodeMap.entries()) {
+        if (file.path.startsWith(dir + "/") || file.path === dir) {
+          parentNodeId = dId;
+          const pNode = nodes.find((n) => n.id === dId);
+          if (pNode) {
+            parentX = pNode.x || 0;
+            parentY = pNode.y || 0;
+            parentZ = pNode.z || 0;
+          }
+          break;
+        }
+      }
+
+      const localAngle = (2 * Math.PI * idx) / 8 + (idx * 0.4);
+      const localRadius = parentNodeId === rootId ? 90 + (idx % 4) * 25 : 55 + (idx % 3) * 20;
+
+      let zOffset = (idx % 5 - 2) * 25;
+      if (type === "entry") zOffset = 55;
+      if (type === "config") zOffset = -45;
+
+      const node: ArchitectureGraphNode = {
+        id: fileId,
+        name: fileName,
+        path: file.path,
+        type,
+        language: file.language,
+        size: file.size,
+        depth: parts.length + 1,
+        x: Math.round(parentX + Math.cos(localAngle) * localRadius),
+        y: Math.round(parentY + Math.sin(localAngle) * localRadius),
+        z: Math.round(parentZ + zOffset)
+      };
+
+      nodes.push(node);
+      nodeMap.add(fileId);
+
+      edges.push({
+        source: parentNodeId,
+        target: fileId,
+        type: type === "entry" ? "entry" : "contains"
+      });
+    });
+
+    return { nodes, edges };
   }
 }
 

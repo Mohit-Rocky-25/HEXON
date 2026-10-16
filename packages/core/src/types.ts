@@ -34,6 +34,30 @@ export interface ArchitectureSummary {
   }[];
 }
 
+export interface ArchitectureGraphNode {
+  id: string;
+  name: string;
+  path: string;
+  type: "root" | "dir" | "entry" | "route" | "component" | "test" | "config" | "source";
+  size?: number;
+  language?: string;
+  depth: number;
+  x?: number;
+  y?: number;
+  z?: number;
+}
+
+export interface ArchitectureGraphEdge {
+  source: string;
+  target: string;
+  type: "contains" | "entry" | "dependency";
+}
+
+export interface ArchitectureGraph {
+  nodes: ArchitectureGraphNode[];
+  edges: ArchitectureGraphEdge[];
+}
+
 export interface AnswerResponse {
   answer: string;
   citations: SourceReference[];
